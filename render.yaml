@@ -3,8 +3,8 @@ services:
       name: garage-app
       runtime: docker
       dockerfilePath: Dockerfile
-      buildCommand: docker build -t garage-app .
-      startCommand: docker run -p 10000:80 -e APP_ENV=production -e APP_DEBUG=false garage-app
+      # No buildCommand needed!
+      startCommand: docker run -p 10000:80 -e APP_ENV=production garage-app
       port: 10000
       envVars:
           - key: APP_ENV

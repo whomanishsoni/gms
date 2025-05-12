@@ -1,26 +1,21 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Verify PHP is available
-php -v
-
-# Install Composer locally (no system install needed)
-EXPECTED_CHECKSUM="$(php -r 'copy("https://composer.github.io/installer.sig", "php://stdout");')"
+# Install composer locally
+EXPECTED_CHECKSUM="$(wget -q -O - https://composer.github.io/installer.sig)"
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 ACTUAL_CHECKSUM="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"
 
 if [ "$EXPECTED_CHECKSUM" != "$ACTUAL_CHECKSUM" ]; then
-    echo 'ERROR: Invalid composer installer checksum'
+    >&2 echo 'ERROR: Invalid composer installer checksum'
     exit 1
 fi
 
-php composer-setup.php --install-dir=bin --filename=composer
+php composer-setup.php --quiet
 rm composer-setup.php
 
-# Run composer with local binary
-./bin/composer install --no-dev --no-interaction --prefer-dist
-
-# Laravel setup
+# Run composer and Laravel commands
+php composer.phar install --no-dev --no-interaction --prefer-dist
 php artisan key:generate --force
 php artisan storage:link
 php artisan migrate --force

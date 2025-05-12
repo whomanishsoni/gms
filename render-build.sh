@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install PHP extensions (no sudo needed)
-apt-get update && apt-get install -y php-cli php-mbstring php-xml php-zip unzip php-pgsql
-
-# Install Composer
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-# Run Laravel commands
+# Install composer dependencies
 composer install --no-dev --no-interaction --prefer-dist
+
+# Run Laravel setup
 php artisan key:generate --force
 php artisan storage:link
 php artisan migrate --force

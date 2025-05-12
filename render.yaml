@@ -2,10 +2,9 @@ services:
     - type: web
       name: garage-app
       runtime: docker
-      dockerfilePath: Dockerfile
-      # No buildCommand needed!
-      startCommand: docker run -p 10000:80 -e APP_ENV=production garage-app
-      port: 10000
+      dockerfilePath: ./Dockerfile
+      startCommand: apache2-foreground
+      port: 80
       envVars:
           - key: APP_ENV
             value: production

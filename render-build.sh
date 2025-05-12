@@ -1,22 +1,18 @@
 #!/usr/bin/env bash
 set -o errexit
 
-# Install PHP and dependencies
-sudo apt-get update
-sudo apt-get install -y php-cli php-mbstring php-xml php-zip unzip
+# Install PHP extensions (no sudo needed)
+apt-get update && apt-get install -y php-cli php-mbstring php-xml php-zip unzip php-pgsql
 
 # Install Composer
-curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install PostgreSQL client if needed
-sudo apt-get install -y php-pgsql
-
-# Run composer and artisan commands
-composer install --no-dev
+# Run Laravel commands
+composer install --no-dev --no-interaction --prefer-dist
 php artisan key:generate --force
 php artisan storage:link
 php artisan migrate --force
 
-# Optional: Cache configuration for production
+# Cache configuration for production
 php artisan config:cache
 php artisan route:cache

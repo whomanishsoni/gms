@@ -2,7 +2,7 @@ services:
   - type: web
     name: garage-app
     runtime: php
-    buildCommand: "./render-build.sh"
+    buildCommand: "render-build.sh"
     startCommand: "php artisan serve --host=0.0.0.0 --port=8080"
     envVars:
       - key: APP_ENV

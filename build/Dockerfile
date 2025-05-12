@@ -1,4 +1,3 @@
-# Use official PHP 8.2 image with Apache
 FROM php:8.2-apache
 
 # Install system dependencies
@@ -20,28 +19,26 @@ WORKDIR /var/www/html
 # Copy composer files first for caching
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies (no dev dependencies)
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Copy the rest of the application files
+# Copy the rest of the application
 COPY . .
 
-# Set proper permissions
-RUN chown -R www-data:www-data /var/www/html/storage
-RUN chmod -R 775 /var/www/html/storage
+# Set permissions
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
 
-# Generate application key
+# Generate key and optimize
 RUN php artisan key:generate --force
-
-# Optimize application
 RUN php artisan config:cache
 RUN php artisan route:cache
 RUN php artisan view:cache
 
-# Enable Apache rewrite module
+# Enable Apache rewrite
 RUN a2enmod rewrite
 
-# Set Apache document root
+# Set document root
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf

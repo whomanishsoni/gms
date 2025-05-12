@@ -1,13 +1,25 @@
 services:
     - type: web
       name: garage-app
-      runtime: php
-      buildCommand: "./render-build.sh"
-      startCommand: "php artisan serve --host=0.0.0.0 --port=8080"
+      runtime: docker
+      dockerfilePath: Dockerfile
+      buildCommand: docker build -t garage-app .
+      startCommand: docker run -p 10000:80 -e APP_ENV=production -e APP_DEBUG=false garage-app
+      port: 10000
       envVars:
           - key: APP_ENV
             value: production
           - key: APP_DEBUG
             value: false
-          - key: LOG_CHANNEL
-            value: stderr
+          - key: DB_CONNECTION
+            value: pgsql
+          - key: DB_HOST
+            value: dpg-d6gp31adbo4c73bjm6j0-a
+          - key: DB_PORT
+            value: 5432
+          - key: DB_DATABASE
+            value: garage_jrbr
+          - key: DB_USERNAME
+            value: garage_user
+          - key: DB_PASSWORD
+            value: RVXGsPe6bLJqRPEsjppaxGPuW9yWh1Lz
